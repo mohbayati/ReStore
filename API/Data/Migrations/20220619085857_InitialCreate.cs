@@ -16,7 +16,6 @@ namespace API.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    PictureUrl = table.Column<string>(type: "TEXT", nullable: true),
                     Price = table.Column<long>(type: "INTEGER", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     Brand = table.Column<string>(type: "TEXT", nullable: true),
