@@ -9,55 +9,61 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { removeListener } from "process";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import agent from "../../app/api/agent";
 import NotFound from "../../app/errors/NotFound";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { Product } from "../../app/models/product";
-import { useStoreContext } from "../../context/StoreContext";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
+import {
+  addBasketItemAsync,
+  removeBasketItemAsync,
+} from "../basket/basketSlice";
+import { fetchProductAsync, productsSelector } from "./catalogSlice";
 
 export default function ProductDetails() {
-  const { basket, setBasket, removeItem } = useStoreContext();
+  const { basket, status } = useAppSelector((state) => state.basket);
+  const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submiting, setSubmiting] = useState(false);
+  const { status: productStatus } = useAppSelector((state) => state.catalog);
+  const product = useAppSelector((state) =>
+    productsSelector.selectById(state, id!)
+  );
+
   const [quantity, setQuantity] = useState(0);
   const item = basket?.items.find((i) => i.productId === product?.id);
-
+  useEffect(() => {
+    if (item) setQuantity(item.quantity);
+    if (!product) dispatch(fetchProductAsync(parseInt(id!)));
+  }, [id, item, product, dispatch]);
   function handlUpdateCart() {
-    setSubmiting(true);
     if (!item || quantity > item.quantity) {
       const updatedQuantity = item ? quantity - item.quantity : quantity;
-      agent.Basket.addItem(product?.id!, updatedQuantity)
-        .then((basket) => setBasket(basket))
-        .catch((e) => console.log(e))
-        .finally(() => setSubmiting(false));
+      dispatch(
+        addBasketItemAsync({
+          productId: product?.id!,
+          quantity: updatedQuantity,
+        })
+      );
     } else {
       const updatedQuantity = item.quantity - quantity;
-      agent.Basket.removeItem(product?.id!, updatedQuantity)
-        .then((basket) => removeItem(product?.id!, updatedQuantity))
-        .catch((e) => console.log(e))
-        .finally(() => setSubmiting(false));
+      dispatch(
+        removeBasketItemAsync({
+          productId: product?.id!,
+          quantity: updatedQuantity,
+        })
+      );
     }
   }
   function handlInputChange(event: any) {
     if (event.target.value >= 0) {
       setQuantity(parseInt(event.target.value));
-      console.log(quantity);
     }
   }
 
-  useEffect(() => {
-    if (item) setQuantity(item.quantity);
-    agent.Catalog.details(parseInt(id!))
-      .then((response) => setProduct(response))
-      .catch((error) => console.log(error))
-      .finally(() => setLoading(false));
-  }, [id, item]);
-  if (loading) return <LoadingComponent message="Loading Product..." />;
+  if (productStatus.includes("pending"))
+    return <LoadingComponent message="Loading Product..." />;
   if (!product) return <NotFound />;
   return (
     <Grid container spacing={6}>
@@ -114,7 +120,7 @@ export default function ProductDetails() {
               disabled={
                 item?.quantity! === quantity || (!item && quantity === 0)
               }
-              loading={submiting}
+              loading={status.includes("pendding")}
               onClick={handlUpdateCart}
               color="primary"
               size="large"
