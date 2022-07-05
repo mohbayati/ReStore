@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
+import { request } from "http";
 import { toast } from "react-toastify";
 import { history } from "../..";
 
@@ -52,6 +53,7 @@ const requests = {
 const Catalog = {
   list: () => requests.get("products"),
   details: (id: number) => requests.get(`products/${id}`),
+  fetchFilters: () => requests.get(`products/filters`),
 };
 
 const TestErrors = {
