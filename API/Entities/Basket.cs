@@ -9,25 +9,28 @@ namespace API.Entities
     {
         public int Id { get; set; }
         public string BuyerId { get; set; }
-        public List<BasketItem> Item { get; set; }= new();
-        public void AddItem(Product product,int quantity)
+        public List<BasketItem> Item { get; set; } = new();
+        public string PaymentIntentId { get; set; }
+        public string ClientSecret { get; set; }
+        public void AddItem(Product product, int quantity)
         {
-            if(Item.All(item=>item.ProductId!=product.Id))
+            if (Item.All(item => item.ProductId != product.Id))
             {
-                Item.Add(new BasketItem{
-                    Product=product,
-                    Quantity=quantity
-                    });
+                Item.Add(new BasketItem
+                {
+                    Product = product,
+                    Quantity = quantity
+                });
             }
-            var existingItem = Item.FirstOrDefault(item=>item.ProductId==product.Id);
-            if(existingItem!=null) existingItem.Quantity +=quantity;
+            var existingItem = Item.FirstOrDefault(item => item.ProductId == product.Id);
+            if (existingItem != null) existingItem.Quantity += quantity;
         }
-        public void RemoveItem(int productId,int quantity)
+        public void RemoveItem(int productId, int quantity)
         {
-            var item=Item.FirstOrDefault(item=>item.ProductId==productId);
-            if(item==null)return;
-            item.Quantity-=quantity;
-            if(item.Quantity==0) Item.Remove(item);
+            var item = Item.FirstOrDefault(item => item.ProductId == productId);
+            if (item == null) return;
+            item.Quantity -= quantity;
+            if (item.Quantity == 0) Item.Remove(item);
         }
     }
 }

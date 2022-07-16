@@ -50,6 +50,7 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<PaymentService>();
 builder.Services.AddCors();
 builder.Services.AddIdentityCore<User>(opt =>
 {

@@ -16,6 +16,8 @@ namespace API.Extensions
             {
                 Id = basket.Id,
                 BuyerId = basket.BuyerId,
+                PaymentIntentId = basket.PaymentIntentId,
+                ClientSecret = basket.ClientSecret,
                 items = basket.Item.Select(item => new BasketItemDto
                 {
                     ProductId = item.ProductId,
