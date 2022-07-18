@@ -108,7 +108,8 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 
 app.UseRouting();
-
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors(opt =>
 {
     opt.AllowAnyHeader()
@@ -121,5 +122,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToController("Index", "FallBack");
 
 app.Run();
