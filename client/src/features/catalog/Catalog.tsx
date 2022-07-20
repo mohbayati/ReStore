@@ -1,17 +1,11 @@
 import { Grid, Paper } from "@mui/material";
-import { useEffect } from "react";
 import AppPagination from "../../app/components/AppPagination";
 import CheckBoxButtons from "../../app/components/CheckBoxButtons";
 import RadioButtonGrop from "../../app/components/RadioButtonGruop";
+import useProducts from "../../app/hooks/useProducts";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
-import {
-  fetchFilters,
-  fetchProductsAsync,
-  productsSelector,
-  setPageNumber,
-  setProductParams,
-} from "./catalogSlice";
+import { setPageNumber, setProductParams } from "./catalogSlice";
 import ProductList from "./ProductList";
 import ProductSearch from "./ProductSearch";
 
@@ -22,23 +16,9 @@ const sortOption = [
 ];
 
 export default function Catalog() {
-  const products = useAppSelector(productsSelector.selectAll);
-  const {
-    productLoaded,
-    filtersLoaded,
-    brands,
-    types,
-    productParams,
-    metaData,
-  } = useAppSelector((state) => state.catalog);
+  const { products, filtersLoaded, brands, types, metaData } = useProducts();
+  const { productParams } = useAppSelector((state) => state.catalog);
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (!productLoaded) dispatch(fetchProductsAsync());
-  }, [productLoaded, dispatch]);
-  useEffect(() => {
-    if (!filtersLoaded) dispatch(fetchFilters());
-  }, [filtersLoaded, dispatch]);
 
   if (!filtersLoaded)
     return <LoadingComponent message="Loading Products ..." />;

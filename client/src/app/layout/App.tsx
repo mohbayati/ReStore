@@ -22,6 +22,7 @@ import Register from "../../features/account/Register";
 import { fetchCurrentUser } from "../../features/account/accountSlice";
 import PrivateRoute from "./PrivateRoute";
 import Orders from "../../features/orders/Orders";
+import Inventory from "../../features/admin/Inventory";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -73,6 +74,9 @@ function App() {
           </Route>
           <Route path="/orders" element={<PrivateRoute />}>
             <Route path="/orders" element={<Orders />} />
+          </Route>
+          <Route path="/inventory" element={<PrivateRoute roles={["Admin"]} />}>
+            <Route path="/inventory" element={<Inventory />} />
           </Route>
           <Route path="/Login" element={<Login />} />
           <Route path="/Register" element={<Register />} />
